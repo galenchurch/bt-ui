@@ -29,7 +29,6 @@ func (r *Radio) bufPopLine() []byte {
 		return nil
 	} else {
 		ret := r.UartBuf[:lend+2]
-		fmt.Printf("ret:%s", ret)
 		r.UartBuf = r.UartBuf[lend+2:]
 		return ret
 	}
@@ -38,30 +37,36 @@ func (r *Radio) bufPopLine() []byte {
 func (r *Radio) readTimeout(p *serial.Port, t int64) bool {
 	cur := time.Now()
 
-	for true {
+	for {
 		what := r.getSerialLineTime(p, t)
-		fmt.Printf("What: %v\n", what)
 		if what == 0 {
-
 			bdel := time.Now().Sub(cur).Nanoseconds()
 			th, _ := time.ParseDuration(fmt.Sprintf("%dns", t*1000000))
 			fmt.Printf("big del: %v\n", bdel)
 
 			if bdel > th.Nanoseconds() {
-				fmt.Println("full timeout")
 				return true
 			}
 		} else {
-			fmt.Println("new read")
 			cur = time.Now()
 		}
-
-		fmt.Println("again, again")
 	}
-	fmt.Println("Exit")
-
 	return false
 
+}
+
+func (r *Radio) popTilReady() bool {
+	for {
+		cur := r.bufPopLine()
+		comp, _ := regexp.Match("READY.\r\n", cur)
+		if cur == nil {
+			return false
+		} else if comp {
+			log.Printf("System is Ready\n")
+			return true
+		}
+
+	}
 }
 
 func (r *Radio) getSerialLine(p *serial.Port) int {
@@ -87,8 +92,6 @@ func (r *Radio) getSerialLine(p *serial.Port) int {
 				r.bufAddLine(item)
 				fmt.Printf("Added: %s\n", item)
 			}
-			// cha <- "tests"
-			fmt.Println("Return")
 			return 1
 		}
 	}
@@ -105,33 +108,28 @@ func (r *Radio) getSerialLineTime(p *serial.Port, t int64) int {
 	timerout := time.Now()
 
 	for {
-		fmt.Println("before read")
-		n, err := p.Read(buf)
-		fmt.Println("After Read")
+		n, err := p.Read(buf) ///Will hang here without timeout
 		if err != nil {
-			log.Fatal(err)
+			log.Printf("TIMEOUT: %s", err)
 		}
 		line = append(line, buf[:n]...)
-		fmt.Printf("Line: %s -- n: %d\n", line, n)
 
 		search := graphLine.FindAll(line, -1)
 		if search != nil {
 			//reset timer
 			timerout = time.Now()
 
-			fmt.Printf("Search: %q\n", search)
 			for _, item := range search {
 				r.bufAddLine(item)
-				fmt.Printf("Added: %s\n", item)
+				fmt.Printf("Added: %q\n", item)
 			}
-			fmt.Println("Return")
 			return 1
 		} else {
 			del := time.Now().Sub(timerout).Nanoseconds()
 			tr, _ := time.ParseDuration(fmt.Sprintf("%dns", t*1000000))
-			fmt.Printf("del: %v\n", del)
+
 			if del > tr.Nanoseconds() {
-				fmt.Println("line timeout")
+				log.Printf("line timeout, del=%v\n", del)
 				return 0
 			}
 
@@ -161,31 +159,18 @@ func main() {
 
 	fmt.Printf("Passed Port: %v\n", portArg[0])
 
-	c := &serial.Config{Name: portArg[0], Baud: 115200}
+	c := &serial.Config{Name: portArg[0], Baud: 115200, ReadTimeout: time.Second * 2}
 	port, err := serial.OpenPort(c)
 	if err != nil {
-		log.Fatal(err)
+		//log.Fatal(err)
+		log.Printf("TIMEOUT: %s", err)
 	}
 
-	// rad.readAllTimeout(port, 1000)
-	//rad.readTimeout(port, 1000)
-	// rad.getSerialLine(port)
-	// rad.getSerialLine(port)
-	// rad.getSerialLine(port)
-	// rad.getSerialLine(port)
-
 	rad.getSerialLineTime(port, 3000)
-	// rad.getSerialLineTime(port, 1000)
-	// rad.getSerialLineTime(port, 1000)
-	// rad.getSerialLineTime(port, 1000)
 
 	rad.readTimeout(port, 1000)
 	fmt.Printf("buffer: %q\n", rad.UartBuf)
-
-	//getSerialLineTimeout(port, 1)
-	//getSerialLine(port)
-	//getSerialLine(port)
-	//getSerialLineTimeout(port, 1)
+	rad.popTilReady()
 
 	s := "SET\r\n"
 	w, err_w := port.Write([]byte(s))
@@ -196,10 +181,6 @@ func main() {
 	//time.Sleep(time.Second)
 	fmt.Println("Wrote", w, "bytes: ", s)
 	rad.readTimeout(port, 1000)
-	//	getSerialLineTimeout(port, 1)
-
-	// Make sure to close it later.
-	fmt.Printf("buffer: %q\n", rad.UartBuf)
 
 	defer port.Close()
 }
