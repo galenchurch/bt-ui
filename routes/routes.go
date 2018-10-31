@@ -21,9 +21,17 @@ func InitHandler(cxt echo.Context) error {
 	fmt.Printf("buffer: %q\n", rad.UartBuf)
 	rad.PopTilReady()
 
-	//defer rad.ClosePort()
-
 	return cxt.String(http.StatusOK, string(rad.UartBuf))
+}
+func ClosePortHandler(cxt echo.Context) error {
+	rad.ClosePort()
+	return cxt.String(http.StatusOK, "Port Closed")
+}
+
+func ScoCloseHandler(cxt echo.Context) error {
+
+	p.SCOClose(rad)
+	return cxt.String(http.StatusOK, "SCO Close")
 }
 
 func GetPairHandler(cxt echo.Context) error {
@@ -48,4 +56,9 @@ func HSPHander(cxt echo.Context) error {
 func A2DPHander(cxt echo.Context) error {
 	p.ConnectA2DP(rad)
 	return cxt.String(http.StatusOK, "A2DP")
+}
+
+func BufferHandler(cxt echo.Context) error {
+
+	return cxt.String(http.StatusOK, string(rad.UartBuf))
 }

@@ -10,12 +10,13 @@
 <fieldset>
     <legend>System Operations</legend>
     <button onclick="init()">init</button>
-    
+    <button onclick="close()">Close UART</button>
     <button onclick="paired()">get paired</button>
 </fieldset>
 <fieldset>
     <legend>Paired Operations</legend>
     <button onclick="kill()">kill</button>
+    <button onclick="scoclose()">SCO close</button>
     <button onclick="hsp()">connect hsp</button>
     <button onclick="a2dp()">connect A2DP</button>
 </fieldset>
@@ -39,6 +40,14 @@ function hsp() {
 
 function a2dp() {
   $.get( "/a2dp" );
+}
+
+function close() {
+  $.get( "/close" );
+}
+
+function scoclose(){
+    $.get("/scoclose");
 }
 </script>
 
