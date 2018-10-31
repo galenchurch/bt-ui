@@ -69,6 +69,24 @@ func (r *Radio) popTilReady() bool {
 	}
 }
 
+func (r *Radio) getPair() Pair {
+
+	addrForm := regexp.MustCompile("[[:alnum:]]{2}:[[:alnum:]]{2}:[[:alnum:]]{2}:[[:alnum:]]{2}:[[:alnum:]]{2}:[[:alnum:]]{2}")
+
+	for {
+		cur := r.bufPopLine()
+		comp, _ := regexp.Match("SET BT PAIR [[:graph:]]+ [[:alnum:]]+\r\n", cur)
+		fmt.Printf("Cur: %q, comp: %v\n", cur, comp)
+		if cur == nil {
+			return Pair{}
+		} else if comp {
+			addr := addrForm.Find(cur)
+			fmt.Printf("Address: %s", addr)
+			return Pair{addr: addr}
+		}
+	}
+}
+
 func (r *Radio) getSerialLine(p *serial.Port) int {
 
 	// cha := make(chan string)
@@ -181,6 +199,7 @@ func main() {
 	//time.Sleep(time.Second)
 	fmt.Println("Wrote", w, "bytes: ", s)
 	rad.readTimeout(port, 1000)
+	rad.getPair()
 
 	defer port.Close()
 }
