@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<script
+			  src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous"></script>
+<html>
+<body>
+
+<h1>iWrap BT UI</h1>
+<fieldset>
+    <legend>System Operations</legend>
+    <button onclick="init()">init</button>
+    
+    <button onclick="paired()">get paired</button>
+</fieldset>
+<fieldset>
+    <legend>Paired Operations</legend>
+    <button onclick="kill()">kill</button>
+    <button onclick="hsp()">connect hsp</button>
+    <button onclick="a2dp()">connect A2DP</button>
+</fieldset>
+
+<script>
+function init() {
+  $.get( "/init" );
+}
+
+function kill() {
+  $.get( "/kill" );
+}
+
+function paired() {
+  $.get( "/paired" );
+}
+
+function hsp() {
+  $.get( "/hsp" );
+}
+
+function a2dp() {
+  $.get( "/a2dp" );
+}
+</script>
+
+</body>
+</html>

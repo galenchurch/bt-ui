@@ -1,0 +1,51 @@
+package routes
+
+import (
+	"fmt"
+	"net/http"
+
+	radio "github.com/galenchurch/bt-ui/radio"
+	"github.com/labstack/echo"
+)
+
+var rad radio.Radio
+var p radio.Pair
+
+func InitHandler(cxt echo.Context) error {
+
+	rad.InitPort("/dev/ttyUSB1")
+
+	rad.GetSerialLineTime(3000)
+
+	rad.ReadTimeout(1000)
+	fmt.Printf("buffer: %q\n", rad.UartBuf)
+	rad.PopTilReady()
+
+	//defer rad.ClosePort()
+
+	return cxt.String(http.StatusOK, string(rad.UartBuf))
+}
+
+func GetPairHandler(cxt echo.Context) error {
+	rad.SendLn("SET")
+
+	rad.ReadTimeout(1000)
+	p = rad.GetPair()
+	return cxt.String(http.StatusOK, "pair")
+}
+
+func KillHandler(cxt echo.Context) error {
+	rad.BufPurge()
+	p.Kill(rad)
+	return cxt.String(http.StatusOK, "Kill")
+}
+
+func HSPHander(cxt echo.Context) error {
+	p.ConnectHSP(rad)
+	return cxt.String(http.StatusOK, "HSP")
+}
+
+func A2DPHander(cxt echo.Context) error {
+	p.ConnectA2DP(rad)
+	return cxt.String(http.StatusOK, "A2DP")
+}

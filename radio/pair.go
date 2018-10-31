@@ -1,4 +1,4 @@
-package main
+package radio
 
 import (
 	"fmt"
@@ -12,24 +12,24 @@ type Pair struct {
 	link int
 }
 
-func (p *Pair) kill(r Radio) {
+func (p *Pair) Kill(r Radio) {
 	s := fmt.Sprintf("KILL %s", p.addr)
 	fmt.Println(s)
-	r.sendLn(s)
+	r.SendLn(s)
 }
 
-func (p *Pair) connectHSP(r Radio) {
+func (p *Pair) ConnectHSP(r Radio) {
 	s := fmt.Sprintf("CALL %s 1108 HSP-AG", p.addr)
 	fmt.Println(s)
-	r.sendLn(s)
+	r.SendLn(s)
 	var link []byte
 
-	r.readTimeout(1000)
+	r.ReadTimeout(1000)
 
 	regline := regexp.MustCompile("CALL [[:digit:]]\r\n")
 	regnum := regexp.MustCompile("[[:digit:]]")
 	for {
-		ln := r.bufPopLine()
+		ln := r.BufPopLine()
 		if regline.Match(ln) {
 			link = regnum.Find(ln)
 			break
@@ -40,7 +40,16 @@ func (p *Pair) connectHSP(r Radio) {
 
 	fmt.Printf("Link: %d", p.link)
 
-	r.sendLn(fmt.Sprintf("SCO OPEN %d", p.link))
-	r.readTimeout(1000)
+	r.SendLn(fmt.Sprintf("SCO OPEN %d", p.link))
+	r.ReadTimeout(1000)
+
+}
+
+func (p *Pair) ConnectA2DP(r Radio) {
+	s := fmt.Sprintf("CALL %s 19 A2DP", p.addr)
+	fmt.Println(s)
+	r.SendLn(s)
+
+	r.ReadTimeout(1000)
 
 }

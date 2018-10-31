@@ -10,6 +10,94 @@
   revision = "58854f77ee8d858ce751b0a9bcc5533fef7bfa9e"
 
 [[projects]]
+  digest = "1:76dc72490af7174349349838f2fe118996381b31ea83243812a97e5a0fd5ed55"
+  name = "github.com/dgrijalva/jwt-go"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
+  version = "v3.2.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:79fd4e99da5251c9bd455069a12f960d6ad2c53a36d8b9dd0a450197afcb7fbf"
+  name = "github.com/galenchurch/gobone"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "36b452334971cea78ebe27eb069be1b0bd2464b2"
+
+[[projects]]
+  branch = "master"
+  digest = "1:15453b3e6e5cb41bdbc62e9647f4b7683465eef11ba8675eac3e226c7573ba11"
+  name = "github.com/galenchurch/hmi"
+  packages = ["routes"]
+  pruneopts = "UT"
+  revision = "7ef1022036221d0a0c558334e453c8193393493e"
+
+[[projects]]
+  digest = "1:9acadb9c8c15b8a9f635a7fa960c9a522b001a3919bc03df92ac26c372476aff"
+  name = "github.com/labstack/echo"
+  packages = [
+    ".",
+    "middleware",
+  ]
+  pruneopts = "UT"
+  revision = "1abaa3049251d17932e4313c2d6165073fd07fd8"
+  version = "v3.3.6"
+
+[[projects]]
+  digest = "1:568171fc14a3d819b112c3e219d351ea7b05e8dad7935c4168c6b3373244a686"
+  name = "github.com/labstack/gommon"
+  packages = [
+    "bytes",
+    "color",
+    "log",
+    "random",
+  ]
+  pruneopts = "UT"
+  revision = "2a618302b929cc20862dda3aa6f02f64dbe740dd"
+  version = "v0.2.7"
+
+[[projects]]
+  digest = "1:c658e84ad3916da105a761660dcaeb01e63416c8ec7bc62256a9b411a05fcd67"
+  name = "github.com/mattn/go-colorable"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "167de6bfdfba052fa6b2d3664c8f5272e23c9072"
+  version = "v0.0.9"
+
+[[projects]]
+  digest = "1:0981502f9816113c9c8c4ac301583841855c8cf4da8c72f696b3ebedf6d0e4e5"
+  name = "github.com/mattn/go-isatty"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c"
+  version = "v0.0.4"
+
+[[projects]]
+  branch = "master"
+  digest = "1:52b21e6be25049834aea5ecdde35d723c00fbdad3ea0357f2072dfb105836e02"
+  name = "github.com/tarm/serial"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "98f6abe2eb07edd42f6dfa2a934aea469acc29b7"
+
+[[projects]]
+  digest = "1:c468422f334a6b46a19448ad59aaffdfc0a36b08fdcc1c749a0b29b6453d7e59"
+  name = "github.com/valyala/bytebufferpool"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7"
+  version = "v1.0.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:268b8bce0064e8c057d7b913605459f9a26dcab864c0886a56d196540fbf003f"
+  name = "github.com/valyala/fasttemplate"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "dcecefd839c4193db0d35b88ec65b4c12d360ab0"
+
+[[projects]]
   branch = "master"
   digest = "1:177147c6beea9efbe2e2f58b17ff1686f084ac7d7f4b6a36e085f8cb98e106a0"
   name = "go.bug.st/serial.v1"
@@ -19,6 +107,17 @@
   ]
   pruneopts = "UT"
   revision = "5f7892a7bb453066bdc6683b9b5d24d9dee03ec1"
+
+[[projects]]
+  branch = "master"
+  digest = "1:674a2405f77863f4f362e3e45078fd9caa647dc1c0e8b022e3b9dc1ae89fbc8f"
+  name = "golang.org/x/crypto"
+  packages = [
+    "acme",
+    "acme/autocert",
+  ]
+  pruneopts = "UT"
+  revision = "4d3f4d9ffa16a13f451c3b2999e9c49e9750bf06"
 
 [[projects]]
   branch = "master"
@@ -34,6 +133,12 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = ["go.bug.st/serial.v1"]
+  input-imports = [
+    "github.com/galenchurch/hmi/routes",
+    "github.com/labstack/echo",
+    "github.com/labstack/echo/middleware",
+    "github.com/tarm/serial",
+    "go.bug.st/serial.v1",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

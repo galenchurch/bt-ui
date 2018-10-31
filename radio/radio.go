@@ -1,4 +1,4 @@
-package main
+package radio
 
 import (
 	"bytes"
@@ -16,7 +16,7 @@ type Radio struct {
 	port    *serial.Port
 }
 
-func (r *Radio) initPort(pname string) {
+func (r *Radio) InitPort(pname string) {
 	c := &serial.Config{Name: pname, Baud: 115200, ReadTimeout: time.Second * 2}
 	port, err := serial.OpenPort(c)
 	if err != nil {
@@ -26,19 +26,19 @@ func (r *Radio) initPort(pname string) {
 	r.port = port
 }
 
-func (r *Radio) closePort() {
+func (r *Radio) ClosePort() {
 	r.port.Close()
 }
-func (r *Radio) bufPurge() {
+func (r *Radio) BufPurge() {
 	r.UartBuf = nil
 }
 
-func (r *Radio) bufAddLine(l []byte) int {
+func (r *Radio) BufAddLine(l []byte) int {
 	r.UartBuf = append(r.UartBuf, l...)
 	return 1
 }
 
-func (r *Radio) bufPopLine() []byte {
+func (r *Radio) BufPopLine() []byte {
 
 	lend := bytes.Index(r.UartBuf, []byte("\r\n"))
 	if lend < 0 {
@@ -50,11 +50,11 @@ func (r *Radio) bufPopLine() []byte {
 	}
 }
 
-func (r *Radio) readTimeout(t int64) bool {
+func (r *Radio) ReadTimeout(t int64) bool {
 	cur := time.Now()
 
 	for {
-		what := r.getSerialLineTime(t)
+		what := r.GetSerialLineTime(t)
 		if what == 0 {
 			bdel := time.Now().Sub(cur).Nanoseconds()
 			th, _ := time.ParseDuration(fmt.Sprintf("%dns", t*1000000))
@@ -71,9 +71,9 @@ func (r *Radio) readTimeout(t int64) bool {
 
 }
 
-func (r *Radio) popTilReady() bool {
+func (r *Radio) PopTilReady() bool {
 	for {
-		cur := r.bufPopLine()
+		cur := r.BufPopLine()
 		comp, _ := regexp.Match("READY.\r\n", cur)
 		if cur == nil {
 			return false
@@ -85,12 +85,12 @@ func (r *Radio) popTilReady() bool {
 	}
 }
 
-func (r *Radio) getPair() Pair {
+func (r *Radio) GetPair() Pair {
 
 	addrForm := regexp.MustCompile("[[:alnum:]]{2}:[[:alnum:]]{2}:[[:alnum:]]{2}:[[:alnum:]]{2}:[[:alnum:]]{2}:[[:alnum:]]{2}")
 
 	for {
-		cur := r.bufPopLine()
+		cur := r.BufPopLine()
 		comp, _ := regexp.Match("SET BT PAIR [[:graph:]]+ [[:alnum:]]+\r\n", cur)
 		fmt.Printf("Cur: %q, comp: %v\n", cur, comp)
 		if cur == nil {
@@ -103,7 +103,7 @@ func (r *Radio) getPair() Pair {
 	}
 }
 
-func (r *Radio) getSerialLine() int {
+func (r *Radio) GetSerialLine() int {
 
 	// cha := make(chan string)
 	graphLine := regexp.MustCompile(`[[:print:]]*\r\n`)
@@ -123,7 +123,7 @@ func (r *Radio) getSerialLine() int {
 		if search != nil {
 			fmt.Printf("Search: %q\n", search)
 			for _, item := range search {
-				r.bufAddLine(item)
+				r.BufAddLine(item)
 				fmt.Printf("Added: %s\n", item)
 			}
 			return 1
@@ -131,7 +131,7 @@ func (r *Radio) getSerialLine() int {
 	}
 }
 
-func (r *Radio) sendLn(s string) bool {
+func (r *Radio) SendLn(s string) bool {
 
 	w, errw := r.port.Write([]byte(fmt.Sprintf("%s\r\n", s)))
 	if errw != nil {
@@ -143,7 +143,7 @@ func (r *Radio) sendLn(s string) bool {
 	return true
 }
 
-func (r *Radio) getSerialLineTime(t int64) int {
+func (r *Radio) GetSerialLineTime(t int64) int {
 
 	// cha := make(chan string)
 	graphLine := regexp.MustCompile(`[[:print:]]*\r\n`)
@@ -166,7 +166,7 @@ func (r *Radio) getSerialLineTime(t int64) int {
 			timerout = time.Now()
 
 			for _, item := range search {
-				r.bufAddLine(item)
+				r.BufAddLine(item)
 				fmt.Printf("Added: %q\n", item)
 			}
 			return 1
