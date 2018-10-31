@@ -27,14 +27,17 @@ func main() {
 
 	app.GET("/init", routes.InitHandler)
 	app.GET("/kill", routes.KillHandler)
+	app.GET("/purge", routes.PurgeHandler)
 	app.GET("/close", routes.ClosePortHandler)
 
 	app.GET("/scoclose", routes.ScoCloseHandler)
+	app.GET("/scoopen", routes.ScoOpenHandler)
 	app.GET("/paired", routes.GetPairHandler)
 	app.GET("/hsp", routes.HSPHander)
 	app.GET("/a2dp", routes.A2DPHander)
 
 	app.GET("/buffer", routes.BufferHandler)
+	app.GET("/read", routes.ReadHandler)
 
 	err := app.Start(":9000")
 	if err != nil {

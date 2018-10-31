@@ -17,9 +17,19 @@
     <legend>Paired Operations</legend>
     <button onclick="kill()">kill</button>
     <button onclick="scoclose()">SCO close</button>
+    <button onclick="scoopen()">SCO Open</button>
     <button onclick="hsp()">connect hsp</button>
     <button onclick="a2dp()">connect A2DP</button>
 </fieldset>
+<fieldset>
+        <legend>Buffer Operations</legend>
+        <button onclick="purge()">purge</button>
+        <button onclick="read()">read</button>
+</fieldset>
+
+<pre><div id=output></div></pre>
+    
+</body>
 
 <script>
 function init() {
@@ -48,6 +58,27 @@ function close() {
 
 function scoclose(){
     $.get("/scoclose");
+}
+
+function scoopen(){
+    $.get("/scoopen");
+}
+
+function purge() {
+  $.get( "/purge" );
+}
+
+function read(){
+    $.get("/read", function (data){
+        $("#output").html(data)
+    });
+}
+
+function buffer(){
+    $.get("/buffer", function (data){
+        $("#output").html(data)
+    });
+    
 }
 </script>
 

@@ -34,6 +34,12 @@ func ScoCloseHandler(cxt echo.Context) error {
 	return cxt.String(http.StatusOK, "SCO Close")
 }
 
+func ScoOpenHandler(cxt echo.Context) error {
+
+	p.SCOOpen(rad)
+	return cxt.String(http.StatusOK, "SCO Open")
+}
+
 func GetPairHandler(cxt echo.Context) error {
 	rad.SendLn("SET")
 
@@ -43,9 +49,18 @@ func GetPairHandler(cxt echo.Context) error {
 }
 
 func KillHandler(cxt echo.Context) error {
-	rad.BufPurge()
 	p.Kill(rad)
 	return cxt.String(http.StatusOK, "Kill")
+}
+
+func PurgeHandler(cxt echo.Context) error {
+	rad.BufPurge()
+	return cxt.String(http.StatusOK, "Purge")
+}
+
+func ReadHandler(cxt echo.Context) error {
+	rad.ReadTimeout(1000)
+	return cxt.String(http.StatusOK, string(rad.UartBuf))
 }
 
 func HSPHander(cxt echo.Context) error {

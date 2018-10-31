@@ -4,6 +4,8 @@
 
     GET localhost:9000
 
+![alt text](assets/Screenshot.png "Example")
+
 ## API ## 
 
 
