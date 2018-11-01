@@ -10,21 +10,30 @@
 <fieldset>
     <legend>System Operations</legend>
     <button onclick="init()">init</button>
+    <select id=port></select>
     <button onclick="close()">Close UART</button>
     <button onclick="paired()">get paired</button>
+    <button onclick="inquiry()">Inquiry</button>
+    <button onclick="listpair()">List Pairs</button>
+    <button onclick="purgepairs()">Purge Pairs</button>
+    
 </fieldset>
 <fieldset>
     <legend>Paired Operations</legend>
-    <button onclick="kill()">kill</button>
+    Address: <input type="text" id="address"><br><br>
+    <button onclick="list()">List Connections</button>
+    <button onclick="kill()">kill</button><br>
     <button onclick="scoclose()">SCO close</button>
     <button onclick="scoopen()">SCO Open</button>
+    <input type="text" id="link"><br>
     <button onclick="hsp()">connect hsp</button>
     <button onclick="a2dp()">connect A2DP</button>
+    <div id=devices></div>
 </fieldset>
 <fieldset>
-        <legend>Buffer Operations</legend>
-        <button onclick="purge()">purge</button>
-        <button onclick="read()">read</button>
+    <legend>Buffer Operations</legend>
+    <button onclick="purge()">purge</button>
+    <button onclick="read()">read</button>
 </fieldset>
 
 <pre><div id=output></div></pre>
@@ -32,24 +41,46 @@
 </body>
 
 <script>
+$(function(){
+    $.get("/ports", function(data){
+        console.log(data)
+    })
+})
+
 function init() {
-  $.get( "/init" );
+     $.get( "/init", {port: "/dev/ttyUSB1"} );
 }
 
 function kill() {
-  $.get( "/kill" );
+  $.get( "/kill", {address: $("#address").val()} );
 }
 
+function list() {
+  $.get( "/list" );
+}
+function listpair() {
+  $.get( "/listpairs" );
+}
+
+function purgepairs() {
+  $.get( "/purgepairs" );
+}
 function paired() {
   $.get( "/paired" );
 }
 
+function inquiry() {
+  $.get( "/inquiry", function(data){
+      $("#devices").html(data)
+  });
+}
+
 function hsp() {
-  $.get( "/hsp" );
+  $.get( "/hsp", {address: $("#address").val()} );
 }
 
 function a2dp() {
-  $.get( "/a2dp" );
+  $.get( "/a2dp", {address: $("#address").val()} );
 }
 
 function close() {
@@ -57,11 +88,11 @@ function close() {
 }
 
 function scoclose(){
-    $.get("/scoclose");
+    $.get("/scoclose", {link: $("#link").val()});
 }
 
 function scoopen(){
-    $.get("/scoopen");
+    $.get("/scoopen", {link: $("#link").val()});
 }
 
 function purge() {

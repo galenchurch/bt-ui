@@ -98,9 +98,56 @@ func (r *Radio) GetPair() Pair {
 		} else if comp {
 			addr := addrForm.Find(cur)
 			fmt.Printf("Address: %s\n", addr)
-			return Pair{addr: addr}
+			return Pair{Addr: addr}
 		}
 	}
+}
+func (r *Radio) List() {
+	r.BufPurge()
+	r.SendLn("LIST")
+	r.ReadTimeout(1000)
+}
+
+func (r *Radio) PurgePairs() {
+	r.SendLn("SET BT PAIR *")
+}
+
+func (r *Radio) ListPairs() {
+	r.BufPurge()
+	r.SendLn("SET BT PAIR")
+	r.ReadTimeout(1000)
+}
+
+func (r *Radio) Inquiry(t int64) []Device {
+	r.BufPurge()
+	r.SendLn(fmt.Sprintf("INQUIRY %d NAME", t))
+	r.ReadTimeout((t + 1) * 1000)
+	return r.ParseInquiry()
+}
+
+type Device struct {
+	Name    string
+	Address string
+}
+
+func (r *Radio) ParseInquiry() []Device {
+	var dev []Device
+	nameln := regexp.MustCompile(`^NAME [[:print:]]+\r\n`)
+	addrForm := regexp.MustCompile("[[:alnum:]]{2}:[[:alnum:]]{2}:[[:alnum:]]{2}:[[:alnum:]]{2}:[[:alnum:]]{2}:[[:alnum:]]{2}")
+	nameForm := regexp.MustCompile(`\"[[:print:]]+\"\r\n`)
+
+	i := 0
+	for {
+		ln := r.BufPopLine()
+		if nameln.Match(ln) {
+			d := Device{Name: string(nameForm.Find(ln)), Address: string(addrForm.Find(ln))}
+			dev = append(dev, d)
+			i++
+		} else if ln == nil {
+			return dev
+		}
+	}
+
 }
 
 func (r *Radio) GetSerialLine() int {

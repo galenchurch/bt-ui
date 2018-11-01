@@ -37,7 +37,7 @@ Closes the UART port connection
 
 Closes SCO link connections to paired device
 
-    :9000/scoclose
+    GET :9000/scoclose
 
 ### hsp ###
 

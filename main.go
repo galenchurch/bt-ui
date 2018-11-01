@@ -29,6 +29,13 @@ func main() {
 	app.GET("/kill", routes.KillHandler)
 	app.GET("/purge", routes.PurgeHandler)
 	app.GET("/close", routes.ClosePortHandler)
+	app.GET("/ports", routes.FindPortsHandler)
+	app.GET("/inquiry", routes.InquiryHandler)
+	// app.GET("/pair", routes.PairHandler)
+	app.GET("/list", routes.ListHandler)
+
+	app.GET("/listpairs", routes.ListPairsHandler)
+	app.GET("/purgepairs", routes.PurgePairHandler)
 
 	app.GET("/scoclose", routes.ScoCloseHandler)
 	app.GET("/scoopen", routes.ScoOpenHandler)
