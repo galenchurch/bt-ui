@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
+	"time"
 
 	radio "github.com/galenchurch/bt-ui/radio"
 	"github.com/labstack/echo"
@@ -69,6 +71,26 @@ func ScoOpenHandler(cxt echo.Context) error {
 	p.SCOOpen(rad, l)
 
 	return cxt.String(http.StatusOK, "SCO Open")
+}
+
+func ScoSwitchHandler(cxt echo.Context) error {
+	la := cxt.FormValue("linka")
+	lb := cxt.FormValue("linkb")
+	t := cxt.FormValue("time")
+	tint, _ := strconv.Atoi(t)
+
+	for index := 0; index < 100; index++ {
+		p.SCOClose(rad, la)
+		time.Sleep(time.Duration(tint) * time.Millisecond)
+		p.SCOOpen(rad, lb)
+		time.Sleep(time.Duration(tint) * time.Millisecond)
+		p.SCOClose(rad, lb)
+		time.Sleep(time.Duration(tint) * time.Millisecond)
+		p.SCOOpen(rad, la)
+		time.Sleep(time.Duration(tint) * time.Millisecond)
+	}
+
+	return cxt.String(http.StatusOK, "SCO Switch")
 }
 
 func GetPairHandler(cxt echo.Context) error {

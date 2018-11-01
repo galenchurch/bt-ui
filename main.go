@@ -36,6 +36,7 @@ func main() {
 
 	app.GET("/listpairs", routes.ListPairsHandler)
 	app.GET("/purgepairs", routes.PurgePairHandler)
+	app.GET("/switch", routes.ScoSwitchHandler)
 
 	app.GET("/scoclose", routes.ScoCloseHandler)
 	app.GET("/scoopen", routes.ScoOpenHandler)

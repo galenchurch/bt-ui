@@ -29,7 +29,15 @@
     <button onclick="hsp()">connect hsp</button>
     <button onclick="a2dp()">connect A2DP</button>
     <div id=devices></div>
+    <fieldset>
+            <legend>SCO Time Switch</legend>
+            Link-A: <input type="text" id="la">
+            Time: <input type="text" id="t"> ms
+            Link-B: <input type="text" id="lb">
+            <button onclick="sw()">Switch</button>
+        </fieldset>
 </fieldset>
+
 <fieldset>
     <legend>Buffer Operations</legend>
     <button onclick="purge()">purge</button>
@@ -49,6 +57,10 @@ $(function(){
 
 function init() {
      $.get( "/init", {port: "/dev/ttyUSB1"} );
+}
+
+function sw() {
+  $.get( "/switch", {linka: $("#la").val(), linkb: $("#lb").val(), time: $("#t").val()} );
 }
 
 function kill() {
