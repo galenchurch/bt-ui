@@ -19,6 +19,8 @@ type pts struct {
 	Port []string
 }
 
+// FindPortsHandler returns list of avaible serial ports
+// Using Serial.v1 (rather then tram/serial
 func FindPortsHandler(cxt echo.Context) error {
 	p, err := sr.GetPortsList()
 
@@ -37,6 +39,9 @@ func FindPortsHandler(cxt echo.Context) error {
 	return cxt.JSON(http.StatusOK, port)
 }
 
+// InitHandler opens initial serial connection
+// on port passed as form param
+// It pops and reads serial buffer until READY\r\n or timeout
 func InitHandler(cxt echo.Context) error {
 
 	//p := cxt.Param("port")
@@ -75,19 +80,19 @@ func ScoOpenHandler(cxt echo.Context) error {
 
 func ScoSwitchHandler(cxt echo.Context) error {
 	la := cxt.FormValue("linka")
-	lb := cxt.FormValue("linkb")
+	// lb := cxt.FormValue("linkb")
 	t := cxt.FormValue("time")
 	tint, _ := strconv.Atoi(t)
 
-	for index := 0; index < 100; index++ {
+	for index := 0; index < 50; index++ {
 		p.SCOClose(rad, la)
-		time.Sleep(time.Duration(tint) * time.Millisecond)
-		p.SCOOpen(rad, lb)
-		time.Sleep(time.Duration(tint) * time.Millisecond)
-		p.SCOClose(rad, lb)
-		time.Sleep(time.Duration(tint) * time.Millisecond)
+		//time.Sleep(time.Duration(tint) * time.Millisecond)
 		p.SCOOpen(rad, la)
 		time.Sleep(time.Duration(tint) * time.Millisecond)
+		// p.SCOClose(rad, lb)
+		// //time.Sleep(time.Duration(tint) * time.Millisecond)
+		// p.SCOOpen(rad, la)
+		// time.Sleep(time.Duration(tint) * time.Millisecond)
 	}
 
 	return cxt.String(http.StatusOK, "SCO Switch")
